@@ -374,7 +374,12 @@ if node['rabbitmq']['clustering']['enable'] && (node['rabbitmq']['erlang_cookie'
   end
 
   # Need to reset for clustering #
-  execute 'reset-node' do
+  execute 'download files' do
+    command 'cp /usr/sbin/rabbitmqctl /usr/bin/'
+    subscribes :nothing, 'execute[reset-node]', :immediately
+  end
+  
+  'reset-node' do
     command 'rabbitmqctl stop_app && rabbitmqctl reset && rabbitmqctl start_app'
     action :nothing
     retries 12
